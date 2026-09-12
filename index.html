@@ -99,16 +99,13 @@ a{color:inherit;text-decoration:none}
 .card:hover .vitrina img{transform:scale(1.015)}
 .tag{position:absolute;top:8px;left:8px;z-index:3;padding:4px 8px;background:rgba(255,254,248,.92);color:var(--abismo);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase}
 .card-body{padding:12px 11px 15px;display:flex;flex-direction:column;gap:7px;flex:1}
-/* el nombre estira su área de clic sobre toda la tarjeta, así la prenda entera
-   es el enlace a su página sin anidar un botón dentro de un <a> */
-.card-name{display:block;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
+/* tocar la prenda abre su ficha: el nombre es el botón y estira su área de clic
+   sobre toda la tarjeta, que es la acción principal y debe ser la más fácil */
+.card-name{display:block;text-align:left;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
 .card-name::after{content:"";position:absolute;inset:0;z-index:1}
-.card-name:hover{text-decoration:underline;text-underline-offset:3px}
-/* ELEGIR: vista rápida sin salir de la página. Siempre visible al tacto,
-   y sólo al pasar el ratón donde hay ratón */
-.elegir{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;padding:9px;background:rgba(255,254,248,.94);color:var(--abismo);font-size:9px;letter-spacing:.18em;text-transform:uppercase;transition:background .2s,opacity .25s}
-.elegir:hover{background:var(--concha)}
-@media (hover:hover){ .elegir{opacity:0} .card:hover .elegir,.elegir:focus-visible{opacity:1} }
+/* el enlace a la tienda va encima y siempre visible, nunca escondido tras hover */
+.ir{position:absolute;top:8px;right:8px;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:rgba(255,254,248,.92);color:var(--abismo);font-size:12px;line-height:1;transition:background .2s}
+.ir:hover{background:var(--concha)}
 .card-price{font-family:var(--ft-display);font-size:15px;font-variant-numeric:tabular-nums}
 .swatches{display:flex;gap:5px;margin-top:auto;padding-top:3px;min-height:11px}
 .sw{width:11px;height:11px;border-radius:50%;border:1px solid rgba(34,34,34,.22)}
@@ -160,7 +157,7 @@ a{color:inherit;text-decoration:none}
 .sheet-close{position:absolute;top:10px;right:14px;z-index:3;font-size:19px;line-height:1;color:var(--piedra)}
 .shots{display:flex;gap:4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-top:6px}
 .shots::-webkit-scrollbar{display:none}
-.shots .vitrina{flex:0 0 78%;scroll-snap-align:center}
+.shots .vitrina{flex:0 0 92%;scroll-snap-align:center}
 .sheet-body{padding:20px var(--gutter) 30px;display:flex;flex-direction:column;gap:18px}
 .sheet h3{font-family:var(--ft-display);font-weight:400;font-size:clamp(24px,3vw,32px);margin:0;line-height:1.15}
 .sheet-price{font-size:16px;font-variant-numeric:tabular-nums;color:var(--piedra);margin-top:6px}
@@ -388,9 +385,9 @@ function pinta(){
     const more=p.cols.length>4?`<span class="sw-more">+${p.cols.length-4}</span>`:"";
     return `<article class="card">
       <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy">
-        <button class="elegir" data-i="${i}">Elegir</button></div>
+        <a class="ir" href="${p.url}" target="_blank" rel="noopener" title="Ver en piracanto.com" aria-label="Ver ${p.name} en piracanto.com">↗</a></div>
       <div class="card-body">
-        <a class="card-name" href="${p.url}" target="_blank" rel="noopener">${p.name}</a>
+        <button class="card-name" data-i="${i}">${p.name}</button>
         <div class="card-price">${cop(p.price)}</div>
         <div class="swatches">${sw}${more}</div>
       </div></article>`;
@@ -436,7 +433,7 @@ function cierra(){
   if(el("drawer").hidden){el("scrim").classList.remove("on");setTimeout(()=>{el("scrim").hidden=true;},340);}
   setTimeout(()=>{el("sheet").hidden=true;},340);
 }
-el("grid").addEventListener("click",e=>{const b=e.target.closest(".elegir"); if(b) abre(+b.dataset.i);});
+el("grid").addEventListener("click",e=>{const b=e.target.closest(".card-name"); if(b) abre(+b.dataset.i);});
 el("scrim").addEventListener("click",()=>{ if(!el("sheet").hidden) cierra(); if(!el("drawer").hidden) cierraDrawer(); });
 el("close").addEventListener("click",cierra);
 document.addEventListener("keydown",e=>{
