@@ -1,0 +1,443 @@
+<title>Rediseño Piracanto</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@300;400;500;600&display=swap">
+
+<style>
+:root{
+  --arena:#F5F1EC; --concha:#FFFEF8; --tinta:#222222; --piedra:#393939;
+  --abismo:#1A1714; --caoba:#784C4A; --caoba-h:#5F3B39;
+  --linea:#E3DCD3; --humo:#8B8179;
+  --ft-display:"Amiri",Georgia,"Times New Roman",serif;
+  --ft-ui:"Libre Franklin",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --gap:8px; --gutter:16px; --max:1680px;
+}
+@media (min-width:700px){ :root{ --gutter:24px } }
+@media (min-width:1100px){ :root{ --gutter:40px; --gap:10px } }
+
+*{box-sizing:border-box}
+body{background:var(--arena);color:var(--tinta);font-family:var(--ft-ui);font-weight:300;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--caoba);outline-offset:2px}
+
+/* cintillo */
+.ticker{background:var(--abismo);color:var(--arena);padding:10px var(--gutter)}
+.ticker-in{display:flex;justify-content:center;align-items:center;gap:26px;max-width:var(--max);margin:0 auto}
+.ticker span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+/* los secundarios solo cuando hay sitio de sobra, para no apretar la línea */
+.ticker .aparte{display:none;position:relative}
+.ticker .aparte::before{content:"";position:absolute;left:-13px;top:50%;width:2px;height:2px;border-radius:50%;background:currentColor;opacity:.5}
+@media (min-width:760px){ .ticker .aparte{display:inline} }
+
+/* logotipo */
+.wordmark{display:block;width:150px;overflow:hidden;aspect-ratio:900/158;flex:0 0 auto}
+.wordmark img{width:100%}
+@media (min-width:700px){.wordmark{width:190px}}
+@media (min-width:1100px){.wordmark{width:224px}}
+.lockup{width:230px;margin:0 auto 26px;filter:brightness(0) invert(1);opacity:.92}
+@media (min-width:700px){.lockup{width:280px;margin-bottom:34px}}
+
+/* cabecera */
+.bar{position:sticky;top:0;z-index:40;background:rgba(245,241,236,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--linea)}
+.bar-in{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:13px var(--gutter);max-width:var(--max);margin:0 auto}
+.bar-l,.bar-r{display:flex;align-items:center;gap:18px}
+.bar-r{justify-content:flex-end}
+.ico{width:19px;height:19px;stroke:var(--tinta);stroke-width:1.2;fill:none}
+.nav-wide{display:none;gap:24px}
+.nav-wide a{font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding-bottom:2px;border-bottom:1px solid transparent;transition:border-color .2s}
+.nav-wide a:hover{border-color:var(--tinta)}
+@media (min-width:1100px){ .nav-wide{display:flex} .burger{display:none} }
+.bag{position:relative}
+.bag-n{position:absolute;top:-5px;right:-7px;min-width:15px;height:15px;padding:0 3px;background:var(--caoba);color:var(--concha);border-radius:99px;font-size:9px;line-height:15px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* cajón */
+.drawer{position:fixed;top:0;left:0;bottom:0;width:min(310px,84vw);z-index:71;background:var(--concha);padding:22px var(--gutter);transform:translateX(-100%);transition:transform .34s cubic-bezier(.3,.9,.3,1);overflow-y:auto}
+.drawer.on{transform:none}
+.drawer h3{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--humo);margin:26px 0 12px;font-weight:500}
+.drawer a{display:block;font-family:var(--ft-display);font-size:22px;padding:7px 0}
+.drawer .fine a{font-family:var(--ft-ui);font-size:12.5px;padding:6px 0}
+.drawer-x{font-size:20px;line-height:1;color:var(--piedra);margin-bottom:8px}
+
+/* vitrina */
+.vitrina{position:relative;aspect-ratio:2/3;background:var(--abismo);overflow:hidden}
+.vitrina img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+
+/* portada */
+.hero{position:relative}
+.hero .vitrina{aspect-ratio:2/3}
+.hero picture{display:contents}
+@media (min-width:760px){ .hero .vitrina{aspect-ratio:3/2;max-height:82vh} }
+.hero-txt{position:absolute;left:0;right:0;bottom:0;padding:70px var(--gutter) 34px;text-align:center;color:#FFFEF8;background:linear-gradient(to top,rgba(26,23,20,.8),rgba(26,23,20,0))}
+.hero-eyebrow{font-size:10px;letter-spacing:.24em;text-transform:uppercase;opacity:.85}
+.hero h1{font-family:var(--ft-display);font-weight:400;font-size:clamp(44px,9vw,86px);line-height:1;margin:12px 0 14px;text-wrap:balance}
+.hero p{font-size:clamp(12.5px,1.5vw,15px);line-height:1.65;max-width:44ch;margin:0 auto 22px;opacity:.9}
+.ghost{display:inline-block;padding:13px 36px;border:1px solid currentColor;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;transition:background .25s,color .25s}
+.ghost:hover{background:#FFFEF8;color:var(--abismo)}
+
+/* filtros */
+.rail{display:flex;gap:6px;overflow-x:auto;padding:18px var(--gutter);scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+@media (min-width:860px){.rail{justify-content:center;overflow:visible;flex-wrap:wrap}}
+.chip{flex:0 0 auto;padding:9px 16px;border:1px solid var(--linea);background:var(--concha);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
+.chip sup{font-size:8.5px;opacity:.55;margin-left:5px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--abismo);border-color:var(--abismo);color:var(--concha)}
+.chip[aria-pressed="true"] sup{opacity:.6}
+
+/* títulos */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:24px var(--gutter) 16px;max-width:var(--max);margin:0 auto;scroll-margin-top:72px}
+.sec-head h2{font-family:var(--ft-display);font-weight:400;font-size:clamp(25px,3.2vw,38px);margin:0}
+.sec-head .count{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--humo);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap);padding:0 var(--gap);max-width:var(--max);margin:0 auto}
+@media (min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1100px){.grid{grid-template-columns:repeat(4,1fr)}}
+@media (min-width:1500px){.grid{grid-template-columns:repeat(5,1fr)}}
+.card{background:var(--concha);text-align:left;display:flex;flex-direction:column}
+.card .vitrina img{transition:transform .5s ease}
+.card:hover .vitrina img{transform:scale(1.015)}
+.tag{position:absolute;top:8px;left:8px;z-index:2;padding:4px 8px;background:rgba(255,254,248,.92);color:var(--abismo);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase}
+.card-body{padding:12px 11px 15px;display:flex;flex-direction:column;gap:7px;flex:1}
+.card-name{font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
+.card-price{font-family:var(--ft-display);font-size:15px;font-variant-numeric:tabular-nums}
+.swatches{display:flex;gap:5px;margin-top:auto;padding-top:3px;min-height:11px}
+.sw{width:11px;height:11px;border-radius:50%;border:1px solid rgba(34,34,34,.22)}
+.sw-more{font-size:9px;color:var(--humo);align-self:center;font-variant-numeric:tabular-nums}
+
+/* editorial */
+.editorial{background:var(--abismo);color:var(--concha);margin-top:var(--gap)}
+.ed-in{max-width:var(--max);margin:0 auto}
+.editorial .vitrina{background:#12100E;aspect-ratio:3/2}
+.ed-txt{padding:32px var(--gutter) 38px;text-align:center}
+.ed-txt h2{font-family:var(--ft-display);font-weight:400;font-style:italic;font-size:clamp(30px,3.6vw,44px);margin:0 0 14px}
+.ed-txt p{font-size:clamp(12.5px,1.4vw,15px);line-height:1.7;max-width:46ch;margin:0 auto 22px;opacity:.82}
+@media (min-width:900px){
+  .ed-in{display:grid;grid-template-columns:1.15fr .85fr;align-items:center}
+  .editorial .vitrina{height:100%}
+  .ed-txt{padding:48px 6%;text-align:left}
+  .ed-txt p{margin-left:0}
+}
+
+/* boletín */
+.news{padding:44px var(--gutter) 50px;text-align:center}
+.news h2{font-family:var(--ft-display);font-weight:400;font-size:clamp(27px,3.2vw,38px);margin:0 0 10px}
+.news p{font-size:12.5px;line-height:1.65;color:var(--piedra);max-width:40ch;margin:0 auto 20px}
+.news form{display:flex;flex-direction:column;gap:8px;max-width:440px;margin:0 auto}
+@media (min-width:560px){.news form{flex-direction:row}.news input{flex:1}}
+.news input{padding:14px;border:1px solid var(--linea);background:var(--concha);font:inherit;font-size:12.5px;color:var(--tinta)}
+.news input::placeholder{color:var(--humo)}
+.solid{padding:14px 26px;background:var(--caoba);color:var(--concha);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;transition:background .25s;white-space:nowrap}
+.solid:hover{background:var(--caoba-h)}
+
+/* pie */
+.pie{background:var(--abismo);color:var(--arena)}
+.pie-in{max-width:var(--max);margin:0 auto;padding:38px var(--gutter) 28px}
+.pie-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px 16px}
+@media (min-width:760px){.pie-cols{grid-template-columns:repeat(4,1fr);gap:32px}}
+.pie h3{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;margin:0 0 12px;opacity:.55;font-weight:500}
+.pie ul{margin:0;padding:0}
+.pie li{list-style:none;font-size:12px;line-height:2;opacity:.9}
+.pie-fine{margin-top:30px;padding-top:18px;border-top:1px solid rgba(245,241,236,.16);font-size:9.5px;letter-spacing:.1em;opacity:.5;text-align:center;line-height:1.9}
+
+/* ficha */
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(26,23,20,.55);opacity:0;transition:opacity .3s}
+.scrim.on{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:72;max-height:92vh;overflow-y:auto;background:var(--concha);transform:translateY(100%);transition:transform .36s cubic-bezier(.3,.9,.3,1)}
+.sheet.on{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet,.scrim,.drawer{transition:none}}
+.sheet-grip{position:sticky;top:0;background:var(--concha);padding:10px 0 4px;display:flex;justify-content:center;z-index:2}
+.sheet-grip i{width:34px;height:3px;background:var(--linea);border-radius:99px}
+.sheet-close{position:absolute;top:10px;right:14px;z-index:3;font-size:19px;line-height:1;color:var(--piedra)}
+.shots{display:flex;gap:4px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-top:6px}
+.shots::-webkit-scrollbar{display:none}
+.shots .vitrina{flex:0 0 78%;scroll-snap-align:center}
+.sheet-body{padding:20px var(--gutter) 30px;display:flex;flex-direction:column;gap:18px}
+.sheet h3{font-family:var(--ft-display);font-weight:400;font-size:clamp(24px,3vw,32px);margin:0;line-height:1.15}
+.sheet-price{font-size:16px;font-variant-numeric:tabular-nums;color:var(--piedra);margin-top:6px}
+.sheet-desc{font-size:12.5px;line-height:1.75;color:var(--piedra);margin:0;max-width:52ch}
+.opt-k{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--humo);margin-bottom:10px}
+.opts{display:flex;flex-wrap:wrap;gap:7px}
+.size{min-width:44px;padding:11px 13px;border:1px solid var(--linea);font-size:11px;letter-spacing:.08em;background:var(--concha)}
+.size[aria-pressed="true"]{background:var(--abismo);border-color:var(--abismo);color:var(--concha)}
+.col{display:flex;align-items:center;gap:7px;padding:8px 12px 8px 9px;border:1px solid var(--linea);font-size:10px;letter-spacing:.06em;background:var(--concha)}
+.col i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,34,34,.22);flex:0 0 auto}
+.col[aria-pressed="true"]{border-color:var(--abismo)}
+@media (min-width:900px){
+  .sheet{top:50%;left:50%;right:auto;bottom:auto;width:min(1000px,92vw);max-height:88vh;
+         transform:translate(-50%,-46%) scale(.98);opacity:0;transition:transform .3s,opacity .3s;
+         display:grid;grid-template-columns:1fr 1fr;align-items:start}
+  .sheet.on{transform:translate(-50%,-50%) scale(1);opacity:1}
+  .sheet-grip{display:none}
+  .shots{grid-column:1;flex-direction:column;overflow:visible;gap:var(--gap);padding:0}
+  .shots .vitrina{flex:none}
+  .sheet-body{grid-column:2;position:sticky;top:0;padding:34px 34px 38px}
+}
+.toast{position:fixed;left:50%;bottom:28px;z-index:80;transform:translate(-50%,14px);padding:12px 22px;background:var(--abismo);color:var(--concha);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-in">
+    <span>Envío gratis en compras superiores a $200.000</span>
+    <span class="aparte">Bordados artesanales</span>
+    <span class="aparte">Hecho en Colombia</span>
+  </div>
+</div>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="bar-l">
+      <button class="burger" id="burger" aria-label="Menú"><svg class="ico" viewBox="0 0 20 20"><path d="M2 5h16M2 10h16M2 15h16"/></svg></button>
+      <nav class="nav-wide" aria-label="Principal">
+        <a href="#nuevo" data-cat="todo">New In</a>
+        <a href="#nuevo" data-cat="mujer">Mujer</a>
+        <a href="#nuevo" data-cat="hombre">Hombre</a>
+        <a href="#nuevo" data-cat="unisex">Unisex</a>
+      </nav>
+    </div>
+    <a class="wordmark" href="#" aria-label="Piracanto — inicio"><img src="img/logo.png" alt="Piracanto"></a>
+    <div class="bar-r">
+      <button aria-label="Buscar"><svg class="ico" viewBox="0 0 20 20"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5 18 18"/></svg></button>
+      <button aria-label="Cuenta"><svg class="ico" viewBox="0 0 20 20"><circle cx="10" cy="7" r="3.4"/><path d="M3.5 17.5c0-3.6 2.9-5.6 6.5-5.6s6.5 2 6.5 5.6"/></svg></button>
+      <button class="bag" aria-label="Bolsa">
+        <svg class="ico" viewBox="0 0 20 20"><path d="M4 6h12l-1 12H5L4 6Z"/><path d="M7 6V4.6A3 3 0 0 1 13 4.6V6"/></svg>
+        <span class="bag-n" id="bagN">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="vitrina">
+    <picture>
+      <source media="(min-width:760px)" srcset="img/camp-c.jpg">
+      <img src="img/camp-b.jpg" alt="Campaña Aire Salado de Piracanto">
+    </picture>
+  </div>
+  <div class="hero-txt">
+    <div class="hero-eyebrow">Colección</div>
+    <h1>Aire Salado</h1>
+    <p>Aire salado en la piel, arena que se desliza entre los dedos, brisa que despierta y despeina… así sabe el comienzo de algo nuevo.</p>
+    <a class="ghost" href="#nuevo">Descubrir</a>
+  </div>
+</section>
+
+<nav class="rail" id="rail" aria-label="Filtrar por categoría"></nav>
+
+<div class="sec-head" id="nuevo">
+  <h2 id="secTitle">Lo Nuevo</h2>
+  <div class="count" id="count">30 piezas</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<section class="editorial">
+  <div class="ed-in">
+    <div class="vitrina"><img src="img/camp-a.jpg" alt="Editorial Habitando Piracanto"></div>
+    <div class="ed-txt">
+      <h2>Habitando Piracanto</h2>
+      <p>Materiales nobles, bordados artesanales y siluetas pensadas para destacar.</p>
+      <a class="ghost" href="#nuevo">Ver la colección</a>
+    </div>
+  </div>
+</section>
+
+<section class="news">
+  <h2>Tu primera compra con 10% OFF</h2>
+  <p>Déjanos tu correo y te enviamos el código para estrenar Piracanto.</p>
+  <form id="news">
+    <input type="email" placeholder="Correo electrónico" aria-label="Correo electrónico" required>
+    <button class="solid" type="submit">Generar descuento</button>
+  </form>
+</section>
+
+<footer class="pie">
+  <div class="pie-in">
+    <img class="lockup" src="img/logo.png" alt="Piracanto x Maria Pia">
+    <div class="pie-cols">
+      <div><h3>Tienda</h3><ul><li>New In</li><li>Mujer</li><li>Vestidos</li><li>Sets</li><li>Hombre</li><li>Unisex</li></ul></div>
+      <div><h3>Ayuda</h3><ul><li>Guía de tallas</li><li>Envíos y entregas</li><li>Cambios</li><li>Contacto</li></ul></div>
+      <div><h3>Casa</h3><ul><li>Nuestra historia</li><li>Bordado artesanal</li><li>Talleres aliados</li></ul></div>
+      <div><h3>Síguenos</h3><ul><li>Instagram</li><li>TikTok</li><li>WhatsApp</li></ul></div>
+    </div>
+    <div class="pie-fine">© 2026 Piracanto · Hecho en Colombia<br>Términos y políticas</div>
+  </div>
+</footer>
+
+<nav class="drawer" id="drawer" aria-label="Menú" hidden>
+  <button class="drawer-x" id="drawerX" aria-label="Cerrar menú">✕</button>
+  <h3>Tienda</h3>
+  <a href="#nuevo" data-cat="todo">New In</a>
+  <a href="#nuevo" data-cat="mujer">Mujer</a>
+  <a href="#nuevo" data-cat="vestidos">Vestidos</a>
+  <a href="#nuevo" data-cat="sets">Sets</a>
+  <a href="#nuevo" data-cat="hombre">Hombre</a>
+  <a href="#nuevo" data-cat="unisex">Unisex</a>
+  <h3>Ayuda</h3>
+  <div class="fine">
+    <a href="#">Guía de tallas</a><a href="#">Envíos y entregas</a><a href="#">Cambios</a><a href="#">Contacto</a>
+  </div>
+</nav>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detalle de producto" hidden>
+  <div class="sheet-grip"><i></i></div>
+  <button class="sheet-close" id="close" aria-label="Cerrar">✕</button>
+  <div class="shots" id="shots"></div>
+  <div class="sheet-body">
+    <div>
+      <h3 id="sName"></h3>
+      <div class="sheet-price" id="sPrice"></div>
+    </div>
+    <p class="sheet-desc" id="sDesc"></p>
+    <div id="colBlock"><div class="opt-k">Color</div><div class="opts" id="sCols"></div></div>
+    <div><div class="opt-k">Talla</div><div class="opts" id="sSizes"></div></div>
+    <button class="solid" id="add">Añadir a la bolsa</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* Muestrario de color: nombres exactos de las variantes de la tienda */
+const SW={
+  "Tierra":"#8A6A50","Beige":"#D9C9B4","Amarillo Mantequilla":"#EBD9A3","Amarillo":"#E8C65C",
+  "Azul Náutico":"#2C3E58","Azul Bebé":"#A9C4D8","Azul":"#3A5A80","Negro":"#1A1A1A",
+  "Blanco":"#F2EFE9","verde oliva":"#6E7248","Vino":"#6B2F38","Gris":"#9B9995",
+  "Marrón":"#6B4A33","Champagne":"#E6D5BA",
+  "Estampado":"linear-gradient(135deg,#D9C9B4 0 34%,#6E7248 34% 66%,#8A6A50 66%)",
+  "Floral":"radial-gradient(circle at 32% 30%,#EBD9A3 0 30%,#6E7248 30% 56%,#D9C9B4 56%)",
+  "Rayas Náuticas":"repeating-linear-gradient(45deg,#F2EFE9 0 3px,#2C3E58 3px 6px)",
+  "Rayas Tierra":"repeating-linear-gradient(45deg,#F2EFE9 0 3px,#8A6A50 3px 6px)"
+};
+
+/* Catálogo: los 30 productos de piracanto.com, en su mismo orden */
+const SEIS=["Tierra","Beige","Amarillo Mantequilla","Azul Náutico","Azul Bebé","verde oliva"];
+const SIETE=["Tierra","Beige","Amarillo Mantequilla","Azul Náutico","Azul Bebé","Negro","verde oliva"];
+const OCHO=["Tierra","Beige","Amarillo Mantequilla","Blanco","Azul Náutico","Azul Bebé","Negro","verde oliva"];
+
+const P=[
+ ["Falda Palmar",320000,[],"falda-palmar","jpg,jpg,jpg",[],"Brillo, movimiento y espíritu de verano. Confeccionada en malla con lentejuelas y 20% de elongación, con forro interno. Flecos en rafia natural.",""],
+ ["PANTALÓN BRISA MAN",150000,["mujer"],"pantalon-brisa-man","png,png,png",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, pretina cruzada con resorte en la parte posterior, bolsillos laterales. Tiro alto.",""],
+ ["T-SHIRT MAR ABIERTO",99000,["hombre","unisex"],"tshirt-mar-abierto","jpg,jpg,jpg",["Beige","Vino","Gris","Amarillo Mantequilla"],"La inmensidad del mar y la libertad absoluta. Silueta regular, cuello redondo, uso diario. Algodón reciclado.",""],
+ ["CAMISA ENCUENTRO",145000,["hombre","unisex"],"camisa-encuentro","jpg,jpg,jpg",["Azul","Tierra","verde oliva","Blanco"],"La unión de historias y fragmentos que crean algo único. Diseño con retazos, manga corta, botones en delantero. Pieza única o edición limitada.",""],
+ ["SHORT DE VERANO",110000,["hombre"],"short-verano","jpg,jpg,jpg",["Estampado"],"Nace para vivir entre el sol y el agua, sin interrupciones. Ligero, fresco y en constante movimiento, de la arena a la piscina.",""],
+ ["BERMUDA ORILLA",110000,["hombre"],"bermuda-orilla","jpg,jpg,jpg",["Blanco","verde oliva","Beige"],"Donde la tierra y el mar se encuentran. Largo medio, pretina con resorte y cordón artesanal. Algodón 100%.",""],
+ ["PANTALON TRAVESÍA",150000,["hombre"],"pantalon-travesia","jpg,jpg,jpg",["Azul Bebé","Tierra","Beige","Blanco"],"El viaje, el movimiento constante. Silueta relajada, elástico en la pretina, botón y cordón en cintura, bolsillos laterales.",""],
+ ["TANK BRUMA",120000,["hombre"],"tank-bruma","jpg,jpg,jpg",["Rayas Náuticas","Tierra","Beige","verde oliva"],"La neblina suave del mar. Sin mangas, ajuste cómodo. Básico esencial.",""],
+ ["CAMISA ALBOR",145000,["hombre"],"camisa-albor","jpg,jpg,jpg",SEIS,"El inicio del día junto al mar. Manga ¾, botones en perilla, cuello nerú. Lino natural y algodón 100%.",""],
+ ["CAMISA NUDOS",145000,["hombre"],"camisa-nudos","jpg,jpg,jpg",SEIS,"Un homenaje a los detalles que sostienen todo, aunque casi no se vean. En lino natural: respira con el cuerpo y se mueve con él.",""],
+ ["CAMISA VIENTO",145000,["hombre"],"camisa-viento","png,png,jpg",SEIS,"El viento libre que no se puede contener. Manga larga, cuello clásico, silueta amplia. Lino natural y algodón 100%.",""],
+ ["POLO TRAZO",99000,["mujer"],"polo-trazo","jpg,jpg,jpg",["Azul","Beige","verde oliva"],"Un juego entre lo clásico y lo espontáneo. De silueta cropped, corta justo donde empieza la libertad.",""],
+ ["BERMUDA ORIGEN",135000,["hombre"],"bermuda-origen","jpg,jpg,jpg",OCHO,"Conecta con la raíz, con lo simple que se vuelve poderoso cuando está bien hecho. Corte recto y talle alto.",""],
+ ["PANTALON BRISA WOMAN",150000,["mujer"],"pantalon-brisa-woman","jpg,jpg,jpg",OCHO,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.",""],
+ ["SET ALMA",320000,["mujer","sets"],"set-alma","png,png,png",["Amarillo Mantequilla","Azul Náutico","Beige","Tierra"],"No es solo un set, es una forma de habitarte. Falda graduable que se adapta a tu cuerpo y a tus días, con cordones de borlas artesanales.",""],
+ ["SET LIBRE",350000,["mujer","sets"],"set-libre","jpg,jpg,jpg",["Marrón","Blanco","Amarillo Mantequilla","Rayas Náuticas"],"Nace para recordarte que no tienes que apretarte a nada. Palazzo amplio y suave, con detalles tejidos en la bota.",""],
+ ["TANK TOP OLEAJE",85000,["mujer"],"tank-oleaje","jpg,jpg,jpg",["Blanco","Azul Náutico","Gris","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía. Silueta ajustada, largo a la cintura.",""],
+ ["TANK TOP MAR",85000,["mujer"],"tank-mar","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Una pieza básica, fresca pero nunca simple. Silueta ajustada, escote redondo, manga corta.",""],
+ ["TANK TOP ISLA",85000,["mujer"],"tank-isla","jpg,jpg,jpg",["Azul","Beige","Tierra","verde oliva"],"Una pieza que respira verano. Ligero, cómodo y hecho para fluir contigo.",""],
+ ["TANK TOP COSTA",85000,["mujer"],"tank-costa","jpg,jpg,jpg",["Blanco","Beige","verde oliva","Tierra"],"Una segunda piel que respira en tu cuerpo, como mar en calma. Silueta ajustada, tira mediana.",""],
+ ["TANK TOP ARENA",85000,["mujer"],"tank-arena","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Se posa en tu piel como un susurro. Dibuja tus formas, suave, pero con intención.",""],
+ ["VESTIDO BRISA",380000,["mujer","vestidos"],"vestido-brisa","png,png,png",["Beige","Tierra","Amarillo Mantequilla"],"Nace para sentirse como un suspiro sobre la piel. Un vestido en seda que no pesa, que fluye y respira contigo.",""],
+ ["VESTIDO FLORA",320000,["mujer","vestidos"],"vestido-flora","png,png,png",["Amarillo Mantequilla","Beige","Azul Náutico","Floral"],"Nace como un jardín que camina contigo. Vestido fluido de escote en V, con tiras en cordón artesanal.","Destacado"],
+ ["TANK TOP OLEAJE",80000,["mujer"],"tank-oleaje-wide","jpg",["Blanco","Azul Náutico","verde oliva","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía.",""],
+ ["PANTALÓN BRISA",150000,["mujer"],"pantalon-brisa","jpg,jpg,jpg",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.",""],
+ ["VESTIDO AIRE",190000,["mujer","vestidos"],"vestido-aire","jpg,jpg,jpg",["Beige","Tierra","Amarillo"],"El aire salado que roza la piel. Silueta ligera, tiras graduables, anudado en el busto. Caída natural.",""],
+ ["VESTIDO MAREA",190000,["mujer","vestidos"],"vestido-marea","jpg,jpg,png",["Vino","Negro","Marrón","Champagne"],"El movimiento constante del mar, adaptándose a todo. Escote profundo, recogido en delantero, tela elástica.",""],
+ ["SET RELIEVE",240000,["mujer","sets"],"set-relieve","jpg,jpg,jpg",["Blanco","Marrón","Amarillo"],"Las formas del viento sobre la arena. Blusón amplio y short con resorte en pretina. Silueta oversize.",""],
+ ["SET CALMA",250000,["mujer","sets"],"set-calma","jpg,jpg,jpg",["Blanco","Marrón","Azul Náutico"],"La calma del mar al atardecer. Short de tiro alto con pretina cruzada y blusa suelta con escote en espalda.",""],
+ ["SET ESPUMA",210000,["mujer","sets"],"set-espuma","jpg,jpg,jpg",["Amarillo Mantequilla","Rayas Tierra","Blanco","Tierra"],"Como la espuma del mar que se mueve libre, ligera y sin esfuerzo. Este set nace para fluir contigo.",""]
+].map(([name,price,cats,base,exts,cols,desc,tag])=>({
+  name,price,cats,cols,desc,tag,
+  imgs: exts.split(",").map((e,n)=>`img/${base}${n?"-"+(n+1):""}.${e}`)
+}));
+
+const CATS=[["todo","New In"],["mujer","Mujer"],["vestidos","Vestidos"],["sets","Sets"],["hombre","Hombre"],["unisex","Unisex"]];
+const SIZES=["S","M","L","XL"];
+const cop=n=>"$"+n.toLocaleString("es-CO");
+const el=id=>document.getElementById(id);
+let filtro="todo", bolsa=0, talla="M", color=0;
+
+el("rail").innerHTML=CATS.map(([k,label])=>{
+  const n=k==="todo"?P.length:P.filter(p=>p.cats.includes(k)).length;
+  return `<button class="chip" data-cat="${k}" aria-pressed="${k===filtro}">${label}<sup>${n}</sup></button>`;
+}).join("");
+
+function pinta(){
+  const lista=filtro==="todo"?P:P.filter(p=>p.cats.includes(filtro));
+  el("secTitle").textContent=CATS.find(c=>c[0]===filtro)[1]==="New In"?"Lo Nuevo":CATS.find(c=>c[0]===filtro)[1];
+  el("count").textContent=lista.length+(lista.length===1?" pieza":" piezas");
+  el("grid").innerHTML=lista.map(p=>{
+    const i=P.indexOf(p);
+    const sw=p.cols.slice(0,4).map(c=>`<i class="sw" style="background:${SW[c]}" title="${c}"></i>`).join("");
+    const more=p.cols.length>4?`<span class="sw-more">+${p.cols.length-4}</span>`:"";
+    return `<button class="card" data-i="${i}">
+      <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy"></div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-price">${cop(p.price)}</div>
+        <div class="swatches">${sw}${more}</div>
+      </div></button>`;
+  }).join("");
+}
+pinta();
+
+function filtra(cat){
+  filtro=cat;
+  [...el("rail").children].forEach(c=>c.setAttribute("aria-pressed",c.dataset.cat===filtro));
+  pinta();
+}
+el("rail").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(b) filtra(b.dataset.cat);});
+document.querySelectorAll("a[data-cat]").forEach(a=>a.addEventListener("click",()=>{filtra(a.dataset.cat); cierraDrawer();}));
+
+/* cajón */
+function abreDrawer(){el("drawer").hidden=false;el("scrim").hidden=false;requestAnimationFrame(()=>{el("drawer").classList.add("on");el("scrim").classList.add("on");});}
+function cierraDrawer(){
+  el("drawer").classList.remove("on");
+  if(el("sheet").hidden){el("scrim").classList.remove("on");setTimeout(()=>{el("scrim").hidden=true;},340);}
+  setTimeout(()=>{el("drawer").hidden=true;},340);
+}
+el("burger").addEventListener("click",abreDrawer);
+el("drawerX").addEventListener("click",cierraDrawer);
+
+/* ficha */
+function abre(i){
+  const p=P[i];
+  el("sName").textContent=p.name;
+  el("sPrice").textContent=cop(p.price);
+  el("sDesc").textContent=p.desc;
+  el("shots").innerHTML=p.imgs.map(s=>`<div class="vitrina"><img src="${s}" alt="${p.name}"></div>`).join("");
+  color=0; talla="M";
+  el("colBlock").hidden=p.cols.length===0;
+  el("sCols").innerHTML=p.cols.map((c,n)=>`<button class="col" data-c="${n}" aria-pressed="${n===0}"><i style="background:${SW[c]}"></i>${c}</button>`).join("");
+  el("sSizes").innerHTML=SIZES.map(s=>`<button class="size" data-s="${s}" aria-pressed="${s===talla}">${s}</button>`).join("");
+  el("scrim").hidden=false; el("sheet").hidden=false; el("sheet").scrollTop=0;
+  requestAnimationFrame(()=>{el("scrim").classList.add("on");el("sheet").classList.add("on");});
+}
+function cierra(){
+  el("sheet").classList.remove("on");
+  if(el("drawer").hidden){el("scrim").classList.remove("on");setTimeout(()=>{el("scrim").hidden=true;},340);}
+  setTimeout(()=>{el("sheet").hidden=true;},340);
+}
+el("grid").addEventListener("click",e=>{const c=e.target.closest(".card"); if(c) abre(+c.dataset.i);});
+el("scrim").addEventListener("click",()=>{ if(!el("sheet").hidden) cierra(); if(!el("drawer").hidden) cierraDrawer(); });
+el("close").addEventListener("click",cierra);
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  if(!el("sheet").hidden) cierra();
+  else if(!el("drawer").hidden) cierraDrawer();
+});
+el("sCols").addEventListener("click",e=>{
+  const b=e.target.closest(".col"); if(!b) return;
+  color=+b.dataset.c;
+  [...el("sCols").children].forEach(x=>x.setAttribute("aria-pressed",+x.dataset.c===color));
+});
+el("sSizes").addEventListener("click",e=>{
+  const b=e.target.closest(".size"); if(!b) return;
+  talla=b.dataset.s;
+  [...el("sSizes").children].forEach(x=>x.setAttribute("aria-pressed",x.dataset.s===talla));
+});
+let tid;
+function avisa(msg){const t=el("toast");t.textContent=msg;t.classList.add("on");clearTimeout(tid);tid=setTimeout(()=>t.classList.remove("on"),2200);}
+el("add").addEventListener("click",()=>{bolsa++;el("bagN").textContent=bolsa;avisa(`Añadido · talla ${talla}`);cierra();});
+el("news").addEventListener("submit",e=>{e.preventDefault();e.target.reset();avisa("Código enviado a tu correo");});
+</script>
