@@ -94,12 +94,21 @@ a{color:inherit;text-decoration:none}
 @media (min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media (min-width:1100px){.grid{grid-template-columns:repeat(4,1fr)}}
 @media (min-width:1500px){.grid{grid-template-columns:repeat(5,1fr)}}
-.card{background:var(--concha);text-align:left;display:flex;flex-direction:column}
+.card{position:relative;background:var(--concha);text-align:left;display:flex;flex-direction:column}
 .card .vitrina img{transition:transform .5s ease}
 .card:hover .vitrina img{transform:scale(1.015)}
-.tag{position:absolute;top:8px;left:8px;z-index:2;padding:4px 8px;background:rgba(255,254,248,.92);color:var(--abismo);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase}
+.tag{position:absolute;top:8px;left:8px;z-index:3;padding:4px 8px;background:rgba(255,254,248,.92);color:var(--abismo);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase}
 .card-body{padding:12px 11px 15px;display:flex;flex-direction:column;gap:7px;flex:1}
-.card-name{font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
+/* el nombre estira su área de clic sobre toda la tarjeta, así la prenda entera
+   es el enlace a su página sin anidar un botón dentro de un <a> */
+.card-name{display:block;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
+.card-name::after{content:"";position:absolute;inset:0;z-index:1}
+.card-name:hover{text-decoration:underline;text-underline-offset:3px}
+/* ELEGIR: vista rápida sin salir de la página. Siempre visible al tacto,
+   y sólo al pasar el ratón donde hay ratón */
+.elegir{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;padding:9px;background:rgba(255,254,248,.94);color:var(--abismo);font-size:9px;letter-spacing:.18em;text-transform:uppercase;transition:background .2s,opacity .25s}
+.elegir:hover{background:var(--concha)}
+@media (hover:hover){ .elegir{opacity:0} .card:hover .elegir,.elegir:focus-visible{opacity:1} }
 .card-price{font-family:var(--ft-display);font-size:15px;font-variant-numeric:tabular-nums}
 .swatches{display:flex;gap:5px;margin-top:auto;padding-top:3px;min-height:11px}
 .sw{width:11px;height:11px;border-radius:50%;border:1px solid rgba(34,34,34,.22)}
@@ -163,6 +172,9 @@ a{color:inherit;text-decoration:none}
 .col{display:flex;align-items:center;gap:7px;padding:8px 12px 8px 9px;border:1px solid var(--linea);font-size:10px;letter-spacing:.06em;background:var(--concha)}
 .col i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,34,34,.22);flex:0 0 auto}
 .col[aria-pressed="true"]{border-color:var(--abismo)}
+.verlink{display:block;text-align:center;padding:13px;border:1px solid var(--linea);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;transition:border-color .2s,background .2s}
+.verlink:hover{border-color:var(--abismo);background:var(--arena)}
+.verlink em{font-style:normal;opacity:.5;margin-left:6px}
 @media (min-width:900px){
   .sheet{top:50%;left:50%;right:auto;bottom:auto;width:min(1000px,92vw);max-height:88vh;
          transform:translate(-50%,-46%) scale(.98);opacity:0;transition:transform .3s,opacity .3s;
@@ -294,6 +306,7 @@ a{color:inherit;text-decoration:none}
     <div id="colBlock"><div class="opt-k">Color</div><div class="opts" id="sCols"></div></div>
     <div><div class="opt-k">Talla</div><div class="opts" id="sSizes"></div></div>
     <button class="solid" id="add">Añadir a la bolsa</button>
+    <a class="verlink" id="sLink" href="#" target="_blank" rel="noopener">Ver en piracanto.com<em>↗</em></a>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -316,39 +329,41 @@ const SEIS=["Tierra","Beige","Amarillo Mantequilla","Azul Náutico","Azul Bebé"
 const SIETE=["Tierra","Beige","Amarillo Mantequilla","Azul Náutico","Azul Bebé","Negro","verde oliva"];
 const OCHO=["Tierra","Beige","Amarillo Mantequilla","Blanco","Azul Náutico","Azul Bebé","Negro","verde oliva"];
 
+const TIENDA="https://piracanto.com/products/";
 const P=[
- ["Falda Palmar",320000,[],"falda-palmar","jpg,jpg,jpg",[],"Brillo, movimiento y espíritu de verano. Confeccionada en malla con lentejuelas y 20% de elongación, con forro interno. Flecos en rafia natural.",""],
- ["PANTALÓN BRISA MAN",150000,["mujer"],"pantalon-brisa-man","png,png,png",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, pretina cruzada con resorte en la parte posterior, bolsillos laterales. Tiro alto.",""],
- ["T-SHIRT MAR ABIERTO",99000,["hombre","unisex"],"tshirt-mar-abierto","jpg,jpg,jpg",["Beige","Vino","Gris","Amarillo Mantequilla"],"La inmensidad del mar y la libertad absoluta. Silueta regular, cuello redondo, uso diario. Algodón reciclado.",""],
- ["CAMISA ENCUENTRO",145000,["hombre","unisex"],"camisa-encuentro","jpg,jpg,jpg",["Azul","Tierra","verde oliva","Blanco"],"La unión de historias y fragmentos que crean algo único. Diseño con retazos, manga corta, botones en delantero. Pieza única o edición limitada.",""],
- ["SHORT DE VERANO",110000,["hombre"],"short-verano","jpg,jpg,jpg",["Estampado"],"Nace para vivir entre el sol y el agua, sin interrupciones. Ligero, fresco y en constante movimiento, de la arena a la piscina.",""],
- ["BERMUDA ORILLA",110000,["hombre"],"bermuda-orilla","jpg,jpg,jpg",["Blanco","verde oliva","Beige"],"Donde la tierra y el mar se encuentran. Largo medio, pretina con resorte y cordón artesanal. Algodón 100%.",""],
- ["PANTALON TRAVESÍA",150000,["hombre"],"pantalon-travesia","jpg,jpg,jpg",["Azul Bebé","Tierra","Beige","Blanco"],"El viaje, el movimiento constante. Silueta relajada, elástico en la pretina, botón y cordón en cintura, bolsillos laterales.",""],
- ["TANK BRUMA",120000,["hombre"],"tank-bruma","jpg,jpg,jpg",["Rayas Náuticas","Tierra","Beige","verde oliva"],"La neblina suave del mar. Sin mangas, ajuste cómodo. Básico esencial.",""],
- ["CAMISA ALBOR",145000,["hombre"],"camisa-albor","jpg,jpg,jpg",SEIS,"El inicio del día junto al mar. Manga ¾, botones en perilla, cuello nerú. Lino natural y algodón 100%.",""],
- ["CAMISA NUDOS",145000,["hombre"],"camisa-nudos","jpg,jpg,jpg",SEIS,"Un homenaje a los detalles que sostienen todo, aunque casi no se vean. En lino natural: respira con el cuerpo y se mueve con él.",""],
- ["CAMISA VIENTO",145000,["hombre"],"camisa-viento","png,png,jpg",SEIS,"El viento libre que no se puede contener. Manga larga, cuello clásico, silueta amplia. Lino natural y algodón 100%.",""],
- ["POLO TRAZO",99000,["mujer"],"polo-trazo","jpg,jpg,jpg",["Azul","Beige","verde oliva"],"Un juego entre lo clásico y lo espontáneo. De silueta cropped, corta justo donde empieza la libertad.",""],
- ["BERMUDA ORIGEN",135000,["hombre"],"bermuda-origen","jpg,jpg,jpg",OCHO,"Conecta con la raíz, con lo simple que se vuelve poderoso cuando está bien hecho. Corte recto y talle alto.",""],
- ["PANTALON BRISA WOMAN",150000,["mujer"],"pantalon-brisa-woman","jpg,jpg,jpg",OCHO,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.",""],
- ["SET ALMA",320000,["mujer","sets"],"set-alma","png,png,png",["Amarillo Mantequilla","Azul Náutico","Beige","Tierra"],"No es solo un set, es una forma de habitarte. Falda graduable que se adapta a tu cuerpo y a tus días, con cordones de borlas artesanales.",""],
- ["SET LIBRE",350000,["mujer","sets"],"set-libre","jpg,jpg,jpg",["Marrón","Blanco","Amarillo Mantequilla","Rayas Náuticas"],"Nace para recordarte que no tienes que apretarte a nada. Palazzo amplio y suave, con detalles tejidos en la bota.",""],
- ["TANK TOP OLEAJE",85000,["mujer"],"tank-oleaje","jpg,jpg,jpg",["Blanco","Azul Náutico","Gris","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía. Silueta ajustada, largo a la cintura.",""],
- ["TANK TOP MAR",85000,["mujer"],"tank-mar","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Una pieza básica, fresca pero nunca simple. Silueta ajustada, escote redondo, manga corta.",""],
- ["TANK TOP ISLA",85000,["mujer"],"tank-isla","jpg,jpg,jpg",["Azul","Beige","Tierra","verde oliva"],"Una pieza que respira verano. Ligero, cómodo y hecho para fluir contigo.",""],
- ["TANK TOP COSTA",85000,["mujer"],"tank-costa","jpg,jpg,jpg",["Blanco","Beige","verde oliva","Tierra"],"Una segunda piel que respira en tu cuerpo, como mar en calma. Silueta ajustada, tira mediana.",""],
- ["TANK TOP ARENA",85000,["mujer"],"tank-arena","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Se posa en tu piel como un susurro. Dibuja tus formas, suave, pero con intención.",""],
- ["VESTIDO BRISA",380000,["mujer","vestidos"],"vestido-brisa","png,png,png",["Beige","Tierra","Amarillo Mantequilla"],"Nace para sentirse como un suspiro sobre la piel. Un vestido en seda que no pesa, que fluye y respira contigo.",""],
- ["VESTIDO FLORA",320000,["mujer","vestidos"],"vestido-flora","png,png,png",["Amarillo Mantequilla","Beige","Azul Náutico","Floral"],"Nace como un jardín que camina contigo. Vestido fluido de escote en V, con tiras en cordón artesanal.","Destacado"],
- ["TANK TOP OLEAJE",80000,["mujer"],"tank-oleaje-wide","jpg",["Blanco","Azul Náutico","verde oliva","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía.",""],
- ["PANTALÓN BRISA",150000,["mujer"],"pantalon-brisa","jpg,jpg,jpg",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.",""],
- ["VESTIDO AIRE",190000,["mujer","vestidos"],"vestido-aire","jpg,jpg,jpg",["Beige","Tierra","Amarillo"],"El aire salado que roza la piel. Silueta ligera, tiras graduables, anudado en el busto. Caída natural.",""],
- ["VESTIDO MAREA",190000,["mujer","vestidos"],"vestido-marea","jpg,jpg,png",["Vino","Negro","Marrón","Champagne"],"El movimiento constante del mar, adaptándose a todo. Escote profundo, recogido en delantero, tela elástica.",""],
- ["SET RELIEVE",240000,["mujer","sets"],"set-relieve","jpg,jpg,jpg",["Blanco","Marrón","Amarillo"],"Las formas del viento sobre la arena. Blusón amplio y short con resorte en pretina. Silueta oversize.",""],
- ["SET CALMA",250000,["mujer","sets"],"set-calma","jpg,jpg,jpg",["Blanco","Marrón","Azul Náutico"],"La calma del mar al atardecer. Short de tiro alto con pretina cruzada y blusa suelta con escote en espalda.",""],
- ["SET ESPUMA",210000,["mujer","sets"],"set-espuma","jpg,jpg,jpg",["Amarillo Mantequilla","Rayas Tierra","Blanco","Tierra"],"Como la espuma del mar que se mueve libre, ligera y sin esfuerzo. Este set nace para fluir contigo.",""]
-].map(([name,price,cats,base,exts,cols,desc,tag])=>({
+ ["Falda Palmar",320000,[],"falda-palmar","jpg,jpg,jpg",[],"Brillo, movimiento y espíritu de verano. Confeccionada en malla con lentejuelas y 20% de elongación, con forro interno. Flecos en rafia natural.","","falda-palmar"],
+ ["PANTALÓN BRISA MAN",150000,["mujer"],"pantalon-brisa-man","png,png,png",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, pretina cruzada con resorte en la parte posterior, bolsillos laterales. Tiro alto.","","pantalon-la-brisa"],
+ ["T-SHIRT MAR ABIERTO",99000,["hombre","unisex"],"tshirt-mar-abierto","jpg,jpg,jpg",["Beige","Vino","Gris","Amarillo Mantequilla"],"La inmensidad del mar y la libertad absoluta. Silueta regular, cuello redondo, uso diario. Algodón reciclado.","","t-shirt-mar-abierto"],
+ ["CAMISA ENCUENTRO",145000,["hombre","unisex"],"camisa-encuentro","jpg,jpg,jpg",["Azul","Tierra","verde oliva","Blanco"],"La unión de historias y fragmentos que crean algo único. Diseño con retazos, manga corta, botones en delantero. Pieza única o edición limitada.","","camisa-encuentro"],
+ ["SHORT DE VERANO",110000,["hombre"],"short-verano","jpg,jpg,jpg",["Estampado"],"Nace para vivir entre el sol y el agua, sin interrupciones. Ligero, fresco y en constante movimiento, de la arena a la piscina.","","short-de-verano"],
+ ["BERMUDA ORILLA",110000,["hombre"],"bermuda-orilla","jpg,jpg,jpg",["Blanco","verde oliva","Beige"],"Donde la tierra y el mar se encuentran. Largo medio, pretina con resorte y cordón artesanal. Algodón 100%.","","bermuda-orilla"],
+ ["PANTALON TRAVESÍA",150000,["hombre"],"pantalon-travesia","jpg,jpg,jpg",["Azul Bebé","Tierra","Beige","Blanco"],"El viaje, el movimiento constante. Silueta relajada, elástico en la pretina, botón y cordón en cintura, bolsillos laterales.","","pantalon-travesia"],
+ ["TANK BRUMA",120000,["hombre"],"tank-bruma","jpg,jpg,jpg",["Rayas Náuticas","Tierra","Beige","verde oliva"],"La neblina suave del mar. Sin mangas, ajuste cómodo. Básico esencial.","","tank-bruma"],
+ ["CAMISA ALBOR",145000,["hombre"],"camisa-albor","jpg,jpg,jpg",SEIS,"El inicio del día junto al mar. Manga ¾, botones en perilla, cuello nerú. Lino natural y algodón 100%.","","camisa-albor"],
+ ["CAMISA NUDOS",145000,["hombre"],"camisa-nudos","jpg,jpg,jpg",SEIS,"Un homenaje a los detalles que sostienen todo, aunque casi no se vean. En lino natural: respira con el cuerpo y se mueve con él.","","camisa-nudos"],
+ ["CAMISA VIENTO",145000,["hombre"],"camisa-viento","png,png,jpg",SEIS,"El viento libre que no se puede contener. Manga larga, cuello clásico, silueta amplia. Lino natural y algodón 100%.","","camisa-viento"],
+ ["POLO TRAZO",99000,["mujer"],"polo-trazo","jpg,jpg,jpg",["Azul","Beige","verde oliva"],"Un juego entre lo clásico y lo espontáneo. De silueta cropped, corta justo donde empieza la libertad.","","polo-trazo"],
+ ["BERMUDA ORIGEN",135000,["hombre"],"bermuda-origen","jpg,jpg,jpg",OCHO,"Conecta con la raíz, con lo simple que se vuelve poderoso cuando está bien hecho. Corte recto y talle alto.","","bermuda-origen"],
+ ["PANTALON BRISA WOMAN",150000,["mujer"],"pantalon-brisa-woman","jpg,jpg,jpg",OCHO,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.","","pantalon-brisa-1"],
+ ["SET ALMA",320000,["mujer","sets"],"set-alma","png,png,png",["Amarillo Mantequilla","Azul Náutico","Beige","Tierra"],"No es solo un set, es una forma de habitarte. Falda graduable que se adapta a tu cuerpo y a tus días, con cordones de borlas artesanales.","","set-alma"],
+ ["SET LIBRE",350000,["mujer","sets"],"set-libre","jpg,jpg,jpg",["Marrón","Blanco","Amarillo Mantequilla","Rayas Náuticas"],"Nace para recordarte que no tienes que apretarte a nada. Palazzo amplio y suave, con detalles tejidos en la bota.","","set-libre"],
+ ["TANK TOP OLEAJE",85000,["mujer"],"tank-oleaje","jpg,jpg,jpg",["Blanco","Azul Náutico","Gris","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía. Silueta ajustada, largo a la cintura.","","tank-oleaje"],
+ ["TANK TOP MAR",85000,["mujer"],"tank-mar","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Una pieza básica, fresca pero nunca simple. Silueta ajustada, escote redondo, manga corta.","","tank-mar"],
+ ["TANK TOP ISLA",85000,["mujer"],"tank-isla","jpg,jpg,jpg",["Azul","Beige","Tierra","verde oliva"],"Una pieza que respira verano. Ligero, cómodo y hecho para fluir contigo.","","tank-isla"],
+ ["TANK TOP COSTA",85000,["mujer"],"tank-costa","jpg,jpg,jpg",["Blanco","Beige","verde oliva","Tierra"],"Una segunda piel que respira en tu cuerpo, como mar en calma. Silueta ajustada, tira mediana.","","tank-costa"],
+ ["TANK TOP ARENA",85000,["mujer"],"tank-arena","jpg,jpg,jpg",["Beige","Tierra","verde oliva","Amarillo Mantequilla"],"Se posa en tu piel como un susurro. Dibuja tus formas, suave, pero con intención.","","tank-arena"],
+ ["VESTIDO BRISA",380000,["mujer","vestidos"],"vestido-brisa","png,png,png",["Beige","Tierra","Amarillo Mantequilla"],"Nace para sentirse como un suspiro sobre la piel. Un vestido en seda que no pesa, que fluye y respira contigo.","","vestido-brisa"],
+ ["VESTIDO FLORA",320000,["mujer","vestidos"],"vestido-flora","png,png,png",["Amarillo Mantequilla","Beige","Azul Náutico","Floral"],"Nace como un jardín que camina contigo. Vestido fluido de escote en V, con tiras en cordón artesanal.","Destacado","vestido-marea-copia"],
+ ["TANK TOP OLEAJE",80000,["mujer"],"tank-oleaje-wide","jpg",["Blanco","Azul Náutico","verde oliva","Tierra"],"El movimiento constante de las olas: suave, envolvente y lleno de energía.","","tank-top-oleaje"],
+ ["PANTALÓN BRISA",150000,["mujer"],"pantalon-brisa","jpg,jpg,jpg",SIETE,"La brisa marina que acaricia la piel. Silueta fluida, tiro alto, movimiento amplio.","","pantalon-brisa"],
+ ["VESTIDO AIRE",190000,["mujer","vestidos"],"vestido-aire","jpg,jpg,jpg",["Beige","Tierra","Amarillo"],"El aire salado que roza la piel. Silueta ligera, tiras graduables, anudado en el busto. Caída natural.","","vestido-aire"],
+ ["VESTIDO MAREA",190000,["mujer","vestidos"],"vestido-marea","jpg,jpg,png",["Vino","Negro","Marrón","Champagne"],"El movimiento constante del mar, adaptándose a todo. Escote profundo, recogido en delantero, tela elástica.","","vestido-marea"],
+ ["SET RELIEVE",240000,["mujer","sets"],"set-relieve","jpg,jpg,jpg",["Blanco","Marrón","Amarillo"],"Las formas del viento sobre la arena. Blusón amplio y short con resorte en pretina. Silueta oversize.","","set-relieve"],
+ ["SET CALMA",250000,["mujer","sets"],"set-calma","jpg,jpg,jpg",["Blanco","Marrón","Azul Náutico"],"La calma del mar al atardecer. Short de tiro alto con pretina cruzada y blusa suelta con escote en espalda.","","set-calma"],
+ ["SET ESPUMA",210000,["mujer","sets"],"set-espuma","jpg,jpg,jpg",["Amarillo Mantequilla","Rayas Tierra","Blanco","Tierra"],"Como la espuma del mar que se mueve libre, ligera y sin esfuerzo. Este set nace para fluir contigo.","","set-espumacomo-la-espuma-del-mar-que-se-mueve-libre-ligera-y-sin-esfuerzo-este-set-nace-para-fluir-contigo"]
+].map(([name,price,cats,base,exts,cols,desc,tag,slug])=>({
   name,price,cats,cols,desc,tag,
+  url: TIENDA+slug,
   imgs: exts.split(",").map((e,n)=>`img/${base}${n?"-"+(n+1):""}.${e}`)
 }));
 
@@ -371,13 +386,14 @@ function pinta(){
     const i=P.indexOf(p);
     const sw=p.cols.slice(0,4).map(c=>`<i class="sw" style="background:${SW[c]}" title="${c}"></i>`).join("");
     const more=p.cols.length>4?`<span class="sw-more">+${p.cols.length-4}</span>`:"";
-    return `<button class="card" data-i="${i}">
-      <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy"></div>
+    return `<article class="card">
+      <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy">
+        <button class="elegir" data-i="${i}">Elegir</button></div>
       <div class="card-body">
-        <div class="card-name">${p.name}</div>
+        <a class="card-name" href="${p.url}" target="_blank" rel="noopener">${p.name}</a>
         <div class="card-price">${cop(p.price)}</div>
         <div class="swatches">${sw}${more}</div>
-      </div></button>`;
+      </div></article>`;
   }).join("");
 }
 pinta();
@@ -406,6 +422,7 @@ function abre(i){
   el("sName").textContent=p.name;
   el("sPrice").textContent=cop(p.price);
   el("sDesc").textContent=p.desc;
+  el("sLink").href=p.url;
   el("shots").innerHTML=p.imgs.map(s=>`<div class="vitrina"><img src="${s}" alt="${p.name}"></div>`).join("");
   color=0; talla="M";
   el("colBlock").hidden=p.cols.length===0;
@@ -419,7 +436,7 @@ function cierra(){
   if(el("drawer").hidden){el("scrim").classList.remove("on");setTimeout(()=>{el("scrim").hidden=true;},340);}
   setTimeout(()=>{el("sheet").hidden=true;},340);
 }
-el("grid").addEventListener("click",e=>{const c=e.target.closest(".card"); if(c) abre(+c.dataset.i);});
+el("grid").addEventListener("click",e=>{const b=e.target.closest(".elegir"); if(b) abre(+b.dataset.i);});
 el("scrim").addEventListener("click",()=>{ if(!el("sheet").hidden) cierra(); if(!el("drawer").hidden) cierraDrawer(); });
 el("close").addEventListener("click",cierra);
 document.addEventListener("keydown",e=>{
