@@ -103,9 +103,6 @@ a{color:inherit;text-decoration:none}
    sobre toda la tarjeta, que es la acción principal y debe ser la más fácil */
 .card-name{display:block;text-align:left;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;line-height:1.45}
 .card-name::after{content:"";position:absolute;inset:0;z-index:1}
-/* el enlace a la tienda va encima y siempre visible, nunca escondido tras hover */
-.ir{position:absolute;top:8px;right:8px;z-index:2;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:rgba(255,254,248,.92);color:var(--abismo);font-size:12px;line-height:1;transition:background .2s}
-.ir:hover{background:var(--concha)}
 .card-price{font-family:var(--ft-display);font-size:15px;font-variant-numeric:tabular-nums}
 .swatches{display:flex;gap:5px;margin-top:auto;padding-top:3px;min-height:11px}
 .sw{width:11px;height:11px;border-radius:50%;border:1px solid rgba(34,34,34,.22)}
@@ -169,9 +166,10 @@ a{color:inherit;text-decoration:none}
 .col{display:flex;align-items:center;gap:7px;padding:8px 12px 8px 9px;border:1px solid var(--linea);font-size:10px;letter-spacing:.06em;background:var(--concha)}
 .col i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(34,34,34,.22);flex:0 0 auto}
 .col[aria-pressed="true"]{border-color:var(--abismo)}
-.verlink{display:block;text-align:center;padding:13px;border:1px solid var(--linea);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;transition:border-color .2s,background .2s}
-.verlink:hover{border-color:var(--abismo);background:var(--arena)}
-.verlink em{font-style:normal;opacity:.5;margin-left:6px}
+/* el enlace vive pegado a la descripción, como continuación natural de la lectura */
+.dlink{display:inline-block;margin-top:12px;font-size:11.5px;letter-spacing:.03em;color:var(--caoba);border-bottom:1px solid rgba(120,76,74,.32);padding-bottom:2px;transition:border-color .2s}
+.dlink:hover{border-color:var(--caoba)}
+.dlink em{font-style:normal;opacity:.55;margin-left:5px}
 @media (min-width:900px){
   .sheet{top:50%;left:50%;right:auto;bottom:auto;width:min(1000px,92vw);max-height:88vh;
          transform:translate(-50%,-46%) scale(.98);opacity:0;transition:transform .3s,opacity .3s;
@@ -299,11 +297,13 @@ a{color:inherit;text-decoration:none}
       <h3 id="sName"></h3>
       <div class="sheet-price" id="sPrice"></div>
     </div>
-    <p class="sheet-desc" id="sDesc"></p>
+    <div>
+      <p class="sheet-desc" id="sDesc"></p>
+      <a class="dlink" id="sLink" href="#" target="_blank" rel="noopener">Ver esta prenda en piracanto.com<em>↗</em></a>
+    </div>
     <div id="colBlock"><div class="opt-k">Color</div><div class="opts" id="sCols"></div></div>
     <div><div class="opt-k">Talla</div><div class="opts" id="sSizes"></div></div>
     <button class="solid" id="add">Añadir a la bolsa</button>
-    <a class="verlink" id="sLink" href="#" target="_blank" rel="noopener">Ver en piracanto.com<em>↗</em></a>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -384,8 +384,7 @@ function pinta(){
     const sw=p.cols.slice(0,4).map(c=>`<i class="sw" style="background:${SW[c]}" title="${c}"></i>`).join("");
     const more=p.cols.length>4?`<span class="sw-more">+${p.cols.length-4}</span>`:"";
     return `<article class="card">
-      <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy">
-        <a class="ir" href="${p.url}" target="_blank" rel="noopener" title="Ver en piracanto.com" aria-label="Ver ${p.name} en piracanto.com">↗</a></div>
+      <div class="vitrina">${p.tag?`<span class="tag">${p.tag}</span>`:""}<img src="${p.imgs[0]}" alt="${p.name}" loading="lazy"></div>
       <div class="card-body">
         <button class="card-name" data-i="${i}">${p.name}</button>
         <div class="card-price">${cop(p.price)}</div>
